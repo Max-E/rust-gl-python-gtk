@@ -1,0 +1,69 @@
+This is a demonstration of one way to integrate OpenGL code written in Rust
+with GTK+3 GUI code written in Python.
+
+The OpenGL code is based on learn-opengl-rs [1] which in turn is based on
+the C++ code developed to accompany learnopengl.com. [2] The technique I used
+for integrating the Rust and Python code was derived from this tutorial. [3]
+
+The specific OpenGL demo I used was the one from excercise 10.3 (instanced
+asteroids.) It was selected because its results are randomized and can be
+controlled by a seed value.
+
+For now, the code makes certain assumptions (for instance that the OpenGL
+library is called libGL.so.1) which make this program Linux-only.
+
+BUILDING THE PROGRAM
+
+To compile the Rust component, you'll need to run "cargo build" in this
+directory. Cargo should fetch its dependencies automatically.
+
+To make the Python component ready to run, you'll need to install its
+depenendencies. You'll need a Python 2.x interpreter (tested with Python 2.7.)
+You'll need the Python bindings for GObject introspection (named python-gi in
+Debian-based distros.) You'll also need the "cffi" library for Python (named
+python-cffi in Debian-based distros.)
+
+USING THE PROGRAM
+
+Just run ./main.py in this directory.
+
+The program generates scenes of a planet with orbiting rocks. The placement of
+the rocks is randomized and controlled by a seed. Type a new seed value into
+the "seed" field and hit enter to regenerate the scene based on a new seed. The
+seed must be a nonnegative integer number.
+
+I think seed value 66 is particularly good.
+
+By clicking the button with the plus symbol in the upper right, new tabs can be
+added. Each tab can have its own seed, and you can switch between tabs.
+
+HOW IT WORKS
+
+The Python component is responsible for all OpenGL context creation and for
+making the context current. The Python component could also issue OpenGL calls
+itself, although it doesn't in this case.
+
+The Rust component blasts OpenGL calls into the ether and hopes that there is a
+valid OpenGL context which is current. Because the Rust component does not do
+context creation, a library such as GLFW is not usable here. The Rust component
+must instead use dlopen and dlsym to load OpenGL function pointers directly.
+Luckily, the standard gl-rs allows supplying a custom function loader callback,
+so this approach is fully compatible with codebases that already use gl-rs.
+
+The Rust component is compiled as a dynamic library. All Rust functions that
+need to be reachable from Python are declared with extern "C", so the dynamic
+library has a C ABI and can be used by any language with an FFI library.
+
+Likewise, the Python component does not care what language the renderer is
+written in, as long as exports certain functions through a C ABI.
+
+CAVEAT EMPTOR
+
+This is the first thing I've ever written in Rust and I have basically no idea
+what I'm doing.
+
+REFERENCES
+
+[1] https://github.com/bwasty/learn-opengl-rs
+[2] https://github.com/JoeyDeVries/LearnOpenGL
+[3] https://bheisler.github.io/post/calling-rust-in-python/

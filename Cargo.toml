@@ -1,0 +1,17 @@
+[package]
+authors = ["Benjamin Wasty <benny.wasty@gmail.com>", "Max Eliaser <max@meliaserlow.dyndns.tv>"]
+name = "rust-gl-python-gtk"
+version = "0.1.0"
+
+[dependencies]
+cgmath = "0.14.1"
+gl = "0.6.2"
+image = "0.14.0"
+tobj = "0.1.6"
+rand = "0.3.15"
+libc = "0.2.0"
+lazy_static = "1.0"
+
+[lib]
+name = "rust_component"
+crate-type = ["dylib"]
